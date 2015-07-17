@@ -1,7 +1,16 @@
 require_relative "test_helper"
 require 'minitest'
 
+class TestController < Rulers::COntroller
+  def index
+    "Hello!"
+  end
+end
+
 class TestApp < Rulers::Application
+  def get_controller_and_action(env)
+    [TestController, "index"]
+  end
 end
 
 class RulersAppTest < MiniTest::Unit::TestCase
@@ -12,10 +21,10 @@ class RulersAppTest < MiniTest::Unit::TestCase
   end
 
   def test_request
-    get "/"
+    get "/example/route"
 
     assert last_response.ok?
     body = last_response.body
-    assert body["6"]
+    assert body["Hello"]
   end
 end
