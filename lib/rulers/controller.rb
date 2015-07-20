@@ -1,7 +1,9 @@
 require "erubis"
+require "rulers/file_model"
 
 module Rulers
   class Controller
+    include Rulers::Model
     def initialize(env)
       @env = env
     end
@@ -21,6 +23,28 @@ module Rulers
       klass = self.class
       klass = klass.to_s.gsub /Controller$/, ""
       Rulers.to_underscore klass
+    end
+
+    def request
+      @request ||= Rack::Request.new(@env)
+    end
+
+    def params
+      request.params
+    end
+
+    def response(text, status=200, headers={})
+      raise "Already responsed!" if @response
+      a = [text].flatten
+      @response = Rack::Response.new(a, status, headers)
+    end
+
+    def get_response
+      @response
+    end
+
+    def render_response(*arg)
+      response(render(*arg))
     end
   end
 end
